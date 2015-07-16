@@ -17,6 +17,8 @@ abstract class Cell implements SplObserver, SplSubject {
     protected $id;
     protected $arr_neighbours;
     protected $state;
+    
+    
             
     function __construct($id, $initial_state) {
         $this->id = $id;
@@ -56,12 +58,17 @@ abstract class Cell implements SplObserver, SplSubject {
         $this->arr_neighbours = $arr_neighbours;
     }
     
+    public function setState($state) {
+       if (in_array($state, static::getStates())) {
+             $this->state = $state;
+             $this->notify();
+        }
+    }
+    
     abstract public function update(\SplSubject $calling_cell);
 
     abstract public function notify();
 
-    abstract public function setState($state);
-   
-
+    abstract  static public function getStates();
 
 }

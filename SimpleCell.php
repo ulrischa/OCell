@@ -16,13 +16,7 @@
 
 class SimpleCell extends Cell {
     
-    const STATE_NEW = 'new';
-    const STATE_EXPAND = 'expand';
-    const STATE_FREE = 'free';
-    
-    protected $id;
-    protected $arr_neighbours;
-    protected $state;
+       
     protected static $num_of_childs = 2;
     
 
@@ -36,10 +30,16 @@ class SimpleCell extends Cell {
 
     public function update(\SplSubject $calling_cell) {
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
-        if (($calling_cell->getId() !== $this->getId()) && $this->getState() == SimpleCell::STATE_FREE){
-            $this->setState(SimpleCell::STATE_NEW);
+        if ($calling_cell->getId() !== $this->getId()){
+            if ($this->getState() ==  SimpleCell::getStates()['free']){
+                $this->setState(SimpleCell::getStates()['new']);
+            }
+            elseif ($this->getState() == SimpleCell::getStates()['expand']){
+                $this->setState(SimpleCell::getStates()['free']);
+            }
+            
         }
-        
+                    
     }
 
     public function notify() {
@@ -51,22 +51,13 @@ class SimpleCell extends Cell {
                 }
             }
     }
-    
 
-    public function setState($state) {
-        if ($state == SimpleCell::STATE_EXPAND || $state == SimpleCell::STATE_FREE || $state == SimpleCell::STATE_NEW){
-             $this->state = $state;
-            // Wenn Zustandsänderung Nachbarn benachrichtigen
-            //Wenn Status Ausbreiten dann Nachbarn updaten
-            if ($this->getState() == SimpleCell::STATE_EXPAND){
-                $this->notify();
-                $this->state = SimpleCell::STATE_FREE;
-            }  
-            //echo $this->getId()." State changed to: ".$this->getState().'<br />';
-      
-        }
-    }
     
+    public static function getStates() {
+        return array('new' => 'new', 'expand' => 'expand', 'free' =>'free');
+    }
+
+        
     public function getRow() {
          return  substr($this->getId(), 0, 1);
     }

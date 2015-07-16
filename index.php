@@ -52,32 +52,34 @@ and open the template in the editor.
         echo "<strong>Erste Runde</strong> <br />";
         echo  $all_cells[$rand_expand[0]]->getId().' expand <br />';
         echo  $all_cells[$rand_expand[1]]->getId().' expand <br />';
-       $all_cells[$rand_expand[0]]->setState('expand');
-       $all_cells[$rand_expand[1]]->setState('expand');
+       $all_cells[$rand_expand[0]]->setState(SimpleCell::getStates()['expand']);
+       $all_cells[$rand_expand[1]]->setState(SimpleCell::getStates()['expand']);
        
        //Durchläufe
-       $rounds = 10;
+       $rounds = 20;
        for ($i = 0; $i<$rounds; $i++){
-       echo "<br />Runde ".$i.' <br />';
-        $last_row = '1';
-       foreach ($all_cells as $c) {
-           //Ausgabe des Zustandes
-            $row = $c->getRow();
-            if ($last_row != $row){
-               echo '<br />';
-            }
-            $color = 'white';
-            if ($c->getState() == SimpleCell::STATE_NEW) $color = 'green';
-           
-            echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
-            //Alle neuen auf expand setzen
-            if ($c->getState() == SimpleCell::STATE_NEW){
-                $c->setState(SimpleCell::STATE_EXPAND);
-            }
-          
-            $last_row = $row;
-        }
-         echo "<br />Runde ".$i.' zuende <br /><br />';
+            echo "<br />Runde ".$i.' <br />';
+             $last_row = '1';
+            foreach ($all_cells as $c) {
+                //Ausgabe des Zustandes
+                 $row = $c->getRow();
+                 if ($last_row != $row){
+                    echo '<br />';
+                 }
+                 $color = 'white';
+                 if ($c->getState() == SimpleCell::getStates()['new']) $color = 'green';
+
+                 echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
+                 //Alle neuen auf expand setzen
+                  //echo $c->getState();
+                 if ($c->getState() == SimpleCell::getStates()['new']){
+
+                     $c->setState(SimpleCell::getStates()['expand']);
+                 }
+
+                 $last_row = $row;
+             }
+              echo "<br />Runde ".$i.' zuende <br /><br />';
        }
       
         
