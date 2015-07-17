@@ -25,20 +25,24 @@ abstract class Cell implements SplObserver, SplSubject {
         $this->state = $initial_state;
     }
     public function attach(\SplObserver $cell) {
-        $i = array_search($cell,  $this->arr_neighbours);
-        if ($i === false) {
-             $this->arr_neighbours[] = $cell;
-        }
+           if ($cell instanceof Cell){
+                $i = array_search($cell,  $this->arr_neighbours);
+                if ($i === false) {
+                     $this->arr_neighbours[] = $cell;
+                }
+           }
     }
     
 
     public function detach(\SplObserver $cell) {
-         if (!empty($this->arr_neighbours)) {
-            $i = array_search($cell, $this->arr_neighbours);
-            if ($i !== false) {
-                unset($this->arr_neighbours[$i]);
-            }
-        }
+           if ($cell instanceof Cell){
+               if (!empty($this->arr_neighbours)) {
+                    $i = array_search($cell, $this->arr_neighbours);
+                    if ($i !== false) {
+                        unset($this->arr_neighbours[$i]);
+                    }
+                }
+           }
     }
     
      

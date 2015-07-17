@@ -30,15 +30,18 @@ class SimpleCell extends Cell {
 
     public function update(\SplSubject $calling_cell) {
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
-        if ($calling_cell->getId() !== $this->getId()){
-            if ($this->getState() ==  SimpleCell::getStates()['free']){
-                $this->setState(SimpleCell::getStates()['new']);
-            }
-            elseif ($this->getState() == SimpleCell::getStates()['expand']){
-                $this->setState(SimpleCell::getStates()['free']);
-            }
-            
+        if ($calling_cell instanceof Cell){
+            if ($calling_cell->getId() !== $this->getId()){
+                if ($this->getState() ==  SimpleCell::getStates()['free']){
+                    $this->setState(SimpleCell::getStates()['new']);
+                }
+                elseif ($this->getState() == SimpleCell::getStates()['expand']){
+                    $this->setState(SimpleCell::getStates()['free']);
+                }
+
+            } 
         }
+       
                     
     }
 

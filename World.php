@@ -13,36 +13,43 @@
  */
 abstract class World {
     protected $lifetime;
-    protected $all_cells;
+    private $all_cells;
     
+    function __construct($lifetime) {
+        $this->lifetime = $lifetime;
+    }
+
+    function getLifetime() {
+        return $this->lifetime;
+    }
+
+    function getAll_cells() {
+        return $this->all_cells;
+    }
+    
+    function setLifetime($lifetime) {
+        $this->lifetime = $lifetime;
+    }
+
+    function setAll_cells($all_cells) {
+        $this->all_cells = $all_cells;
+    }
+
+    
+        
     abstract public function populate_world();
-    abstract public function build_neighbourhood();
-    abstract public function what_happens();
+    abstract public function big_bang();
+    abstract public function what_happens_now(Cell $c);
+    abstract public function display_now(Cell $c);
+    abstract public function display_time_separator($i);
     
     public function run_the_world(){
-               for ($i = 0; $i<$rounds; $i++){
-            echo "<br />Runde ".$i.' <br />';
-             $last_row = '1';
-            foreach ($all_cells as $c) {
-                //Ausgabe des Zustandes
-                 $row = $c->getRow();
-                 if ($last_row != $row){
-                    echo '<br />';
-                 }
-                 $color = 'white';
-                 if ($c->getState() == SimpleCell::getStates()['new']) $color = 'green';
-
-                 echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
-                 //Alle neuen auf expand setzen
-                  //echo $c->getState();
-                 if ($c->getState() == SimpleCell::getStates()['new']){
-
-                     $c->setState(SimpleCell::getStates()['expand']);
-                 }
-
-                 $last_row = $row;
+        for ($i = 0; $i < $this->lifetime; $i++){
+            foreach ($this->getAll_cells() as $c) {
+                $this->display_now($c);
+                $this->what_happens_now($c);
              }
-              echo "<br />Runde ".$i.' zuende <br /><br />';
+             $this->display_time_separator($i);
        }
     }
 }
