@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Zelle kann Zustand new, exxpand, free haben.
+ * Zelle kann Zustand new, expand, free haben.
  * Wenn Zustand auf Expand gesetzt, breitet sich die Zelle (auf alle freien Nachbarn) aus und setzt sich selbst auf free
  * 
  * 
@@ -17,9 +17,8 @@ abstract class Cell implements SplObserver, SplSubject {
     protected $id;
     protected $arr_neighbours;
     protected $state;
-    
-    
-            
+
+                
     function __construct($id, $initial_state) {
         $this->id = $id;
         $this->state = $initial_state;
@@ -62,16 +61,25 @@ abstract class Cell implements SplObserver, SplSubject {
         $this->arr_neighbours = $arr_neighbours;
     }
     
+    
     public function setState($state) {
        if (in_array($state, static::getStates())) {
              $this->state = $state;
-             $this->notify();
+             echo '#####STATUS: '.$this->getId().' auf '.$this->getState().'<br />';
         }
     }
     
+    
+    
     abstract public function update(\SplSubject $calling_cell);
 
-    abstract public function notify();
+    public function notify() {
+            if (!empty($this->arr_neighbours)) {
+                foreach ($this->arr_neighbours as $n){
+                    $n->update($this);
+                }
+            }
+    }
 
     abstract  static public function getStates();
 

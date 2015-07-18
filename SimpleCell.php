@@ -17,43 +17,53 @@
 class SimpleCell extends Cell {
     
        
-    protected static $num_of_childs = 2;
+//    protected static $num_of_childs = 2;
+//    
+//
+//    static function getNum_of_childs() {
+//        return self::$num_of_childs;
+//    }
+//
+//    static function setNum_of_childs($num_of_childs) {
+//        self::$num_of_childs = $num_of_childs;
+//    }
     
-
-    static function getNum_of_childs() {
-        return self::$num_of_childs;
-    }
-
-    static function setNum_of_childs($num_of_childs) {
-        self::$num_of_childs = $num_of_childs;
-    }
+    public $last_state;
 
     public function update(\SplSubject $calling_cell) {
+       echo '<br />ZElle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
         if ($calling_cell instanceof Cell){
-            if ($calling_cell->getId() !== $this->getId()){
+            //Wenn man Überprüfung bei Notify machen will: if ($calling_cell->getId() !== $this->getId()){
+            //Wenn die anrufende Zelle nicht gleich der eigenen und auf expand
+            if ($calling_cell->getId() !== $this->getId() && $calling_cell->getState() == SimpleCell::getStates()['expand']){
+                $this->last_state = $this->getState();
+                //Wenn die anrufende Zelle auf expand und diese frei; dann diese auf new 
                 if ($this->getState() ==  SimpleCell::getStates()['free']){
-                    $this->setState(SimpleCell::getStates()['new']);
+                     $this->setState(SimpleCell::getStates()['new']);
                 }
-                elseif ($this->getState() == SimpleCell::getStates()['expand']){
+                //Wenn die anrufende Zelle auf expand und diese new; dann diese auf expand (Bedeutet Angriff) 
+                elseif ($this->getState() == SimpleCell::getStates()['new']){
+                    $this->setState(SimpleCell::getStates()['expand']);
+                }
+                //Wenn die anrufende Zelle auf expand und diese auf expand, dann auf free (Bedeutet Tod)
+                elseif ($this->getState() == SimpleCell::getStates()['expand'] ){
                     $this->setState(SimpleCell::getStates()['free']);
                 }
-
+               
             } 
-        }
-       
-                    
+        }             
     }
+    
+    //Kann so überschrieben werden um nicht alle zu benachrichtigen, sondern nur wenn es was gibt, also bei expand
+//    public function notify() {
+//            if (!empty($this->arr_neighbours) && $this->getState() == SimpleCell::getStates()['expand']) {
+//                foreach ($this->arr_neighbours as $n){
+//                    $n->update($this);
+//                }
+//            }
+//    }
 
-    public function notify() {
-            if (!empty($this->arr_neighbours)) {
-                $rand_new = array_rand($this->arr_neighbours, SimpleCell::$num_of_childs);
-                foreach ($rand_new as $rand_idx) {
-                    //Nachbarzelle aktualisieren mit Info aus dieser Zelle
-                    $this->getArr_neighbours()[$rand_idx]->update($this);
-                }
-            }
-    }
 
     
     public static function getStates() {
@@ -62,7 +72,11 @@ class SimpleCell extends Cell {
 
         
     public function getRow() {
-         return  substr($this->getId(), 0, 1);
+         return  explode(",", $this->getId())[0];
+    }
+    
+    public function getCol() {
+         return  explode(",", $this->getId())[1];
     }
 
 

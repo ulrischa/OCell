@@ -11,18 +11,15 @@ and open the template in the editor.
     </head>
     <body>
         <?php
-        // 11 12 13
-        // 21 22 23
-        // 31 32 33
-
+        include_once 'GifCreator.php';
         include_once 'World.php';
         include_once 'SimpleWorld.php';
-        
+
         $w = new SimpleWorld(10);
-        $w->big_bang();
-        $w->run_the_world();
-        
-        
+       // $w->big_bang();
+       // $w->run_the_world();
+        $w->anmimatedgif(100);
+       
         ?>
     </body>
 </html>
