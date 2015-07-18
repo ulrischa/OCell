@@ -72,10 +72,7 @@ class SimpleWorld extends World {
     }
 
     public function what_happens_now_in_cell(Cell $c) {
-//         if ($c->getState() == SimpleCell::getStates()['new']){
-//            $c->setState(SimpleCell::getStates()['expand']);
-//         }   
-        //$c->notify();
+        $c->notify();
     }
 
     public function display_now($i) {

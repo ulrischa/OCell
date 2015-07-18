@@ -47,7 +47,7 @@ abstract class World {
             echo '<br />Vorher:<br />';
             $this->display_now($this->now);
             foreach ($this->getAll_cells() as $c) {
-               $c->notify();
+               $this->what_happens_now_in_cell($c);
             }
             echo '<br />Nachher:<br />';
             $this->display_now($this->now);
