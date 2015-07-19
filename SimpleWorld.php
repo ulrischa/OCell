@@ -17,11 +17,11 @@ include_once 'GifCreator.php';
 class SimpleWorld extends World {
     
     private $last_row = '1';
-    
-    function __construct($lifetime) {
-        parent::__construct($lifetime);
+    private $gif_output = false;
+            
+    function __construct($gif_output) {
+        $this->gif_output = $gif_output;
         $this->big_bang();
-        $this->run_the_world();
     }
 
     public function big_bang() {
@@ -36,15 +36,15 @@ class SimpleWorld extends World {
     }
 
     public function populate_world() {
-        $c11 = new SimpleCell('1,1',  'free');
-        $c12 = new SimpleCell('1,2',  'free');
-        $c13 = new SimpleCell('1,3',  'free');
-        $c21 = new SimpleCell('2,1',  'free');
-        $c22 = new SimpleCell('2,2',  'free');
-        $c23 = new SimpleCell('2,3', 'free');
-        $c31 = new SimpleCell('3,1',  'free');
-        $c32 = new SimpleCell('3,2',  'free');
-        $c33 = new SimpleCell('3,3',  'free');
+        $c11 = new SimpleCell('1,1',  'free', $this);
+        $c12 = new SimpleCell('1,2',  'free', $this);
+        $c13 = new SimpleCell('1,3',  'free', $this);
+        $c21 = new SimpleCell('2,1',  'free', $this);
+        $c22 = new SimpleCell('2,2',  'free', $this);
+        $c23 = new SimpleCell('2,3', 'free', $this);
+        $c31 = new SimpleCell('3,1',  'free', $this);
+        $c32 = new SimpleCell('3,2',  'free', $this);
+        $c33 = new SimpleCell('3,3',  'free', $this);
         // 11 12 13
         // 21 22 23
         // 31 32 33
@@ -71,13 +71,11 @@ class SimpleWorld extends World {
         
     }
 
-    public function what_happens_now_in_cell(Cell $c) {
-        $c->notify();
-    }
 
-    public function display_now($i) {
-        echo '<br />Jetzt: '.$i.'<br />';  
-        $this->output_now_to_gif(10);
+
+    public function display_now() {
+        if ($this->gif_output == true) $this->output_now_to_gif(10);
+
         foreach ($this->getAll_cells() as $c) {
             $row = $c->getRow();
                   
@@ -117,9 +115,6 @@ class SimpleWorld extends World {
             $img = imagecreate($width, $height);
             imagefill($img, 0, 0, imagecolorallocate($img, 0, 0, 0));
 
-            
-
-
             foreach ($this->getAll_cells() as $c) {
                 $onColour = imagecolorallocate($img, 0, 255, 0);
                    $i_c= intval($c->getCol());
@@ -138,8 +133,6 @@ class SimpleWorld extends World {
                        imagefilledrectangle($img, $x1, $y1, $x2, $y2, $onColour);
                        
                    }
-                   
-
              }
             $filename = $this->now;
 
@@ -150,15 +143,18 @@ class SimpleWorld extends World {
     public function anmimatedgif($pause){
         $frames = array();
         $durations = array();
-        for ($i=0; $i<$this->lifetime; $i++){
-            $frames[] = $i.'.gif';
+        for ($i=0; $i<$this->now-1; $i++){
+            $frames[] = './'.$i.'.gif';
             $durations[] = $pause;
         }
-        // Initialize and create the GIF !
         $gc = new GifCreator\GifCreator();
         $gc->create($frames, $durations, 1);
         $gifBinary = $gc->getGif();        
         file_put_contents('./animated_picture.gif', $gifBinary);  
+    }
+    
+    function __destruct() {
+       print "Destroying " . $this->now . "\n";
     }
 
 }

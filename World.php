@@ -16,20 +16,17 @@ abstract class World {
     protected $now = 0;
     private $all_cells;
     
-    function __construct($lifetime) {
-        $this->lifetime = $lifetime;
-    }
 
     function getLifetime() {
         return $this->lifetime;
     }
-
-    function getAll_cells() {
-        return $this->all_cells;
-    }
     
     function setLifetime($lifetime) {
         $this->lifetime = $lifetime;
+    }
+    
+    function getAll_cells() {
+        return $this->all_cells;
     }
 
     function setAll_cells($all_cells) {
@@ -38,20 +35,10 @@ abstract class World {
     
     abstract public function populate_world();
     abstract public function big_bang();
-    abstract public function what_happens_now_in_cell(Cell $c);
-    abstract public function display_now($now);
-    
-    public function run_the_world(){
-        for ($i = 0; $i < $this->lifetime; $i++){
-            $this->now = $i;
-            echo '<br />Vorher:<br />';
-            $this->display_now($this->now);
-            foreach ($this->getAll_cells() as $c) {
-               $this->what_happens_now_in_cell($c);
-            }
-            echo '<br />Nachher:<br />';
-            $this->display_now($this->now);
-            echo '<hr />';
-       }
+    abstract public function display_now();
+    public function increment_now() {
+        $this->now++;
     }
+    
+    
 }

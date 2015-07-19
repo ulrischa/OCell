@@ -11,14 +11,14 @@ and open the template in the editor.
     </head>
     <body>
         <?php
-        include_once 'GifCreator.php';
+
         include_once 'World.php';
         include_once 'SimpleWorld.php';
 
-        $w = new SimpleWorld(10);
+        $w = new SimpleWorld(true);
        // $w->big_bang();
        // $w->run_the_world();
-        $w->anmimatedgif(100);
+      
        
         ?>
     </body>

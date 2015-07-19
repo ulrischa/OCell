@@ -103,10 +103,8 @@ class GifCreator
                 $this->frameSources[] = ob_get_contents();
                 ob_end_clean();
                 
-            } elseif (is_string($frames[$i])) { // File path or URL or Binary source code
-			     
+            } elseif (is_string($frames[$i])) { // File path or URL or Binary source code     
                 if (file_exists($frames[$i]) || filter_var($frames[$i], FILTER_VALIDATE_URL)) { // File path
-                    
                     $frames[$i] = file_get_contents($frames[$i]);                    
                 }
                 

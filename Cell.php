@@ -17,11 +17,12 @@ abstract class Cell implements SplObserver, SplSubject {
     protected $id;
     protected $arr_neighbours;
     protected $state;
-
-                
-    function __construct($id, $initial_state) {
+    protected $world;
+                            
+    function __construct($id, $initial_state, $world) {
         $this->id = $id;
         $this->state = $initial_state;
+        $this->world = $world;
     }
     public function attach(\SplObserver $cell) {
            if ($cell instanceof Cell){
@@ -66,11 +67,12 @@ abstract class Cell implements SplObserver, SplSubject {
        if (in_array($state, static::getStates())) {
              $this->state = $state;
              echo '#####STATUS: '.$this->getId().' auf '.$this->getState().'<br />';
+             $this->world->display_now();
+             $this->world->increment_now();
+             $this->notify();
         }
     }
-    
-    
-    
+
     abstract public function update(\SplSubject $calling_cell);
 
     public function notify() {
@@ -82,5 +84,15 @@ abstract class Cell implements SplObserver, SplSubject {
     }
 
     abstract  static public function getStates();
+    
+    public function getWorld() {
+        return $this->world;
+    }
+
+    public function setWorld($world) {
+        $this->world = $world;
+    }
+
+
 
 }

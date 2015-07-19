@@ -51,7 +51,8 @@ class SimpleCell extends Cell {
                     $this->setState(SimpleCell::getStates()['free']);
                 }
                
-            } 
+            }
+            
         }             
     }
     
