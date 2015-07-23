@@ -1,7 +1,7 @@
 <?php
 include_once 'World.php';
 include_once 'Cell.php';
-include_once 'SimpleCell.php';
+include_once 'GolCell.php';
 include_once 'GifCreator.php';
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -10,11 +10,11 @@ include_once 'GifCreator.php';
  */
 
 /**
- * Description of SimpleWorld
+ * Description of GolWorld
  *
  * @author schaefflers
  */
-class SimpleWorld extends World {
+class GolWorld extends World {
     
     private $last_row = '1';
     private $gif_output = false;
@@ -29,22 +29,22 @@ class SimpleWorld extends World {
        $this->populate_world();
        //Zufällig zwei auf expand setzen
        $rand_expand = array_rand($this->getAll_cells(), 2);
-       $this->getAll_cells()[$rand_expand[0]]->setState(SimpleCell::getStates()['expand']);
-       $this->getAll_cells()[$rand_expand[1]]->setState(SimpleCell::getStates()['expand']);
+       $this->getAll_cells()[$rand_expand[0]]->setState(GolCell::getStates()['alive']);
+       $this->getAll_cells()[$rand_expand[1]]->setState(GolCell::getStates()['alive']);
        echo 'Start bei '.$this->getAll_cells()[$rand_expand[0]]->getId(). ' und '.$this->getAll_cells()[$rand_expand[1]]->getId();
        
     }
 
     public function populate_world() {
-        $c11 = new SimpleCell('1,1', SimpleCell::getStates()['free'], $this);
-        $c12 = new SimpleCell('1,2',  SimpleCell::getStates()['free'], $this);
-        $c13 = new SimpleCell('1,3',  SimpleCell::getStates()['free'], $this);
-        $c21 = new SimpleCell('2,1',  SimpleCell::getStates()['free'], $this);
-        $c22 = new SimpleCell('2,2',  SimpleCell::getStates()['free'], $this);
-        $c23 = new SimpleCell('2,3', SimpleCell::getStates()['free'], $this);
-        $c31 = new SimpleCell('3,1',  SimpleCell::getStates()['free'], $this);
-        $c32 = new SimpleCell('3,2',  SimpleCell::getStates()['free'], $this);
-        $c33 = new SimpleCell('3,3',  SimpleCell::getStates()['free'], $this);
+        $c11 = new GolCell('1,1',  GolCell::getStates()['free'], $this);
+        $c12 = new GolCell('1,2',  GolCell::getStates()['free'], $this);
+        $c13 = new GolCell('1,3',  GolCell::getStates()['free'], $this);
+        $c21 = new GolCell('2,1',  GolCell::getStates()['free'], $this);
+        $c22 = new GolCell('2,2',  GolCell::getStates()['free'], $this);
+        $c23 = new GolCell('2,3',  GolCell::getStates()['free'], $this);
+        $c31 = new GolCell('3,1',  GolCell::getStates()['free'], $this);
+        $c32 = new GolCell('3,2',  GolCell::getStates()['free'], $this);
+        $c33 = new GolCell('3,3',  GolCell::getStates()['free'], $this);
         // 11 12 13
         // 21 22 23
         // 31 32 33
@@ -83,8 +83,8 @@ class SimpleWorld extends World {
                        echo '<br />';
             }
             $color = 'white';
-            if ($c->getState() == SimpleCell::getStates()['new']) $color = 'green';
-            elseif ($c->getState() == SimpleCell::getStates()['expand']) $color = 'red';
+            if ($c->getState() == SimpleCell::getStates()['alive']) $color = 'green';
+            elseif ($c->getState() == SimpleCell::getStates()['dead']) $color = 'red';
             echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
             $this->last_row = $row;
         }
