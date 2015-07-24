@@ -17,16 +17,32 @@ include_once 'GifCreator.php';
 class GolWorld extends World {
     
     private $last_row = '1';
+    
     private $gif_output = false;
     private $size;
     private $num_seeds;
             
-    function __construct($gif_output, $size, $num_seeds) {
+    function __construct($gif_output, $size, $num_seeds, $lifetime) {
         $this->gif_output = $gif_output;
         $this->size = $size;
         $this->num_seeds = $num_seeds;
+        //Start
+        $this->setLifetime($lifetime);
         $this->big_bang();
+        $this->run_the_world();
     }
+    
+     public function what_happens_now($now) {
+            echo '<br />-----------------------------------------Nächste Generation '.$now.'------------------------------------<br />';
+             foreach ($this->getAll_cells() as $c){
+                 $c->setState($c->getNext_state());
+             }
+             foreach ($this->getAll_cells() as $c){
+                  $c->notify();
+             }
+             $this->increment_now($this->now);
+             $this->display_now($this->now);
+     }
 
     public function big_bang() {
         //Zellen bilden und NAchbarschaft aufbauen
@@ -37,8 +53,9 @@ class GolWorld extends World {
           echo 'Start bei '.$this->getAll_cells()[$rand]->getId().'<br />';
        } 
        echo '***<br />';
+       //Mit set State starten
        foreach ($rand_expand as $rand){
-           $this->getAll_cells()[$rand]->setState(GolCell::getStates()['alive']);
+           $this->getAll_cells()[$rand]->setNext_state(GolCell::getStates()['alive']);
        } 
     }
 
@@ -53,20 +70,7 @@ class GolWorld extends World {
             //echo 's: '. $s.' row: '.$row.' col: '.$col.'<br />';
             $all_cell[$row.','.$col] = new GolCell($row.','.$col,  GolCell::getStates()['free'], $this);
         }
-        
-//        $c11 = new GolCell('1,1',  GolCell::getStates()['free'], $this);
-//        $c12 = new GolCell('1,2',  GolCell::getStates()['free'], $this);
-//        $c13 = new GolCell('1,3',  GolCell::getStates()['free'], $this);
-//        $c21 = new GolCell('2,1',  GolCell::getStates()['free'], $this);
-//        $c22 = new GolCell('2,2',  GolCell::getStates()['free'], $this);
-//        $c23 = new GolCell('2,3',  GolCell::getStates()['free'], $this);
-//        $c31 = new GolCell('3,1',  GolCell::getStates()['free'], $this);
-//        $c32 = new GolCell('3,2',  GolCell::getStates()['free'], $this);
-//        $c33 = new GolCell('3,3',  GolCell::getStates()['free'], $this);
-        // 11 12 13
-        // 21 22 23
-        // 31 32 33
-        
+  
         foreach ($all_cell as $c){
             $row = $c->getRow();
             $col = $c->getCol();
@@ -93,23 +97,13 @@ class GolWorld extends World {
 
         }
         
-//        $c11->setArr_neighbours(array($c12, $c21, $c22));
-//        $c12->setArr_neighbours(array($c11, $c13, $c21, $c22, $c23));
-//        $c13->setArr_neighbours(array($c12, $c22, $c23));
-//        $c21->setArr_neighbours(array($c11, $c12, $c22, $c32, $c31));
-//        $c22->setArr_neighbours(array($c11, $c12, $c13, $c21, $c23, $c31, $c32, $c33));
-//        $c23->setArr_neighbours(array($c12, $c13, $c22, $c32, $c33));
-//        $c31->setArr_neighbours(array($c21, $c22, $c32));
-//        $c32->setArr_neighbours(array($c31, $c21, $c22, $c23, $c33)); 
-//        $c33->setArr_neighbours(array($c32, $c22, $c23)); 
-        
         $this->setAll_cells($all_cell);
         
     }
 
 
 
-    public function display_now() {
+    public function display_now($now) {
         if ($this->gif_output == true) $this->output_now_to_gif(10);
 
         foreach ($this->getAll_cells() as $c) {
@@ -121,7 +115,7 @@ class GolWorld extends World {
             $color = 'white';
             if ($c->getState() == GolCell::getStates()['alive']) $color = 'green';
             elseif ($c->getState() == GolCell::getStates()['dead']) $color = 'red';
-            echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
+            echo ' <span style="color:grey; font-size:xx-small; display:inline-block; background-color:'.$color.'; width:20px; height:20px;border:1px solid black;">'.$c->getId().'</span>';
             $this->last_row = $row;
         }
 

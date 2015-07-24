@@ -32,13 +32,24 @@ abstract class World {
     function setAll_cells($all_cells) {
         $this->all_cells = $all_cells;
     }
-    
+    function getNow() {
+        return $this->now;
+    }
+
     abstract public function populate_world();
     abstract public function big_bang();
-    abstract public function display_now();
+    abstract public function display_now($now);
+    abstract public function what_happens_now($now);
     public function increment_now() {
         $this->now++;
     }
+    
+    
+    public function run_the_world(){
+         for ($i = 0; $i < $this->getLifetime(); $i++){
+             $this->what_happens_now($this->now);
+        }
+     }
     
     
 }

@@ -17,19 +17,6 @@
 class SimpleCell extends Cell {
     
        
-//    protected static $num_of_childs = 2;
-//    
-//
-//    static function getNum_of_childs() {
-//        return self::$num_of_childs;
-//    }
-//
-//    static function setNum_of_childs($num_of_childs) {
-//        self::$num_of_childs = $num_of_childs;
-//    }
-    
-    public $last_state;
-
     public function update(\SplSubject $calling_cell) {
        echo '<br />ZElle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
@@ -38,7 +25,6 @@ class SimpleCell extends Cell {
             //Wenn man Überprüfung bei Notify machen will: if ($calling_cell->getId() !== $this->getId()){
             //Wenn die anrufende Zelle nicht gleich der eigenen und auf expand
             if ($calling_cell->getId() !== $this->getId() && $calling_cell->getState() == SimpleCell::getStates()['expand']){
-                $this->last_state = $this->getState();
                 //Wenn die anrufende Zelle auf expand und diese frei; dann diese auf new 
                 if ($this->getState() ==  SimpleCell::getStates()['free']){
                     $this->setState(SimpleCell::getStates()['new']);
@@ -57,17 +43,6 @@ class SimpleCell extends Cell {
         }             
     }
     
-    //Kann so überschrieben werden um nicht alle zu benachrichtigen, sondern nur wenn es was gibt, also bei expand
-//    public function notify() {
-//            if (!empty($this->arr_neighbours) && $this->getState() == SimpleCell::getStates()['expand']) {
-//                foreach ($this->arr_neighbours as $n){
-//                    $n->update($this);
-//                }
-//            }
-//    }
-
-
-    
     public static function getStates() {
         return array('new' => 'new', 'expand' => 'expand', 'free' =>'free');
     }
@@ -81,5 +56,15 @@ class SimpleCell extends Cell {
          return  explode(",", $this->getId())[1];
     }
 
+    //Hier wird gleich die Benachrichtigung der Nachbarn bei Statusänderung ausgewführt
+    public function setState($state) {
+       if (in_array($state, static::getStates())) {
+             $this->state = $state;
+             echo '#####STATUS: '.$this->getId().' auf '.$this->getState().'<br />';
+             $this->world->display_now($this->world->getNow());
+             $this->world->increment_now($this->world->getNow());
+             $this->notify();
+        }
+    }
 
 }

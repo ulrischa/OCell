@@ -18,17 +18,32 @@ class SimpleWorld extends World {
     
     private $last_row = '1';
     private $gif_output = false;
-            
-    function __construct($gif_output) {
+    private $size;
+    private $num_seeds;        
+       
+    function __construct($gif_output, $size, $num_seeds, $lifetime) {
         $this->gif_output = $gif_output;
+        $this->size = $size;
+        $this->num_seeds = $num_seeds;
+        //Start
+        $this->setLifetime($lifetime);
         $this->big_bang();
+        $this->run_the_world();
     }
+    
+    //Bei generationenwechsel, den alten Stand der Zellen neu Setzen und somit erneut Anstoß liefern
+     public function what_happens_now($now) {
+            echo '<br />-----------------------------------------Nächste Generation mit altem Stand aufsetzen'.$now.'------------------------------------<br />';
+             foreach ($this->getAll_cells() as $c){
+                 $c->setState($c->getState());
+             }
+     }
 
     public function big_bang() {
         //Zellen bilden und NAchbarschaft aufbauen
        $this->populate_world();
        //Zufällig zwei auf expand setzen
-       $rand_expand = array_rand($this->getAll_cells(), 2);
+       $rand_expand = array_rand($this->getAll_cells(), $this->num_seeds);
        foreach ($rand_expand as $rand){
           echo 'Start bei '.$this->getAll_cells()[$rand]->getId().'<br />';
        } 
@@ -39,44 +54,50 @@ class SimpleWorld extends World {
     }
 
     public function populate_world() {
-        $c11 = new SimpleCell('1,1', SimpleCell::getStates()['free'], $this);
-        $c12 = new SimpleCell('1,2',  SimpleCell::getStates()['free'], $this);
-        $c13 = new SimpleCell('1,3',  SimpleCell::getStates()['free'], $this);
-        $c21 = new SimpleCell('2,1',  SimpleCell::getStates()['free'], $this);
-        $c22 = new SimpleCell('2,2',  SimpleCell::getStates()['free'], $this);
-        $c23 = new SimpleCell('2,3', SimpleCell::getStates()['free'], $this);
-        $c31 = new SimpleCell('3,1',  SimpleCell::getStates()['free'], $this);
-        $c32 = new SimpleCell('3,2',  SimpleCell::getStates()['free'], $this);
-        $c33 = new SimpleCell('3,3',  SimpleCell::getStates()['free'], $this);
-        // 11 12 13
-        // 21 22 23
-        // 31 32 33
-        $c11->setArr_neighbours(array($c12, $c21, $c22));
-        $c12->setArr_neighbours(array($c11, $c13, $c21, $c22, $c23));
-        $c13->setArr_neighbours(array($c12, $c22, $c23));
-        $c21->setArr_neighbours(array($c11, $c12, $c22, $c32, $c31));
-        $c22->setArr_neighbours(array($c11, $c12, $c13, $c21, $c23, $c31, $c32, $c33));
-        $c23->setArr_neighbours(array($c12, $c13, $c22, $c32, $c33));
-        $c31->setArr_neighbours(array($c21, $c22, $c32));
-        $c32->setArr_neighbours(array($c31, $c21, $c22, $c23, $c33)); 
-        $c33->setArr_neighbours(array($c32, $c22, $c23)); 
+        $size = $this->size;
+        $all_cell = array();
+        for ($s= 0; $s < $size*$size; $s++){
+            $row = intval($s / $size);
+            $col = ($s - ($row * $size));
+            $row = $row + 1;
+            $col = $col + 1;
+            //echo 's: '. $s.' row: '.$row.' col: '.$col.'<br />';
+            $all_cell[$row.','.$col] = new SimpleCell($row.','.$col,  SimpleCell::getStates()['free'], $this);
+        }
+  
+        foreach ($all_cell as $c){
+            $row = $c->getRow();
+            $col = $c->getCol();
+            //Alle möglichen Richtungen nach Moore
+            $n = ($row-1).','.$col;
+            $nw = ($row-1).','.($col-1);
+            $no = ($row-1).','.($col+1);
+            $w = $row.','.($col-1);
+            $o = $row.','.($col+1);
+            $s = ($row+1).','.$col;
+            $sw = ($row+1).','.($col-1);
+            $so = ($row+1).','.($col+1);        
+            $arr_directions = array($n, $nw, $no, $w, $o, $s, $sw, $so);
+            //Welche davon gibt es?
+            $arr_existing_neighbours = array();
+            foreach ($arr_directions as $d){
+                if (array_key_exists($d, $all_cell)) {
+                    $arr_existing_neighbours[] = $all_cell[$d];
+                }
+            }
+            $c->setArr_neighbours($arr_existing_neighbours);        
+
+
+
+        }
         
-        $this->setAll_cells(array('1,1' =>$c11,
-                            '1,2' => $c12,
-                            '1,3' => $c13,
-                            '1,4' => $c21,
-                            '2,2' => $c22,
-                            '2,3' => $c23,
-                            '3,1' => $c31,
-                            '3,2' => $c32,
-                            '3,3' => $c33
-                            ));
+        $this->setAll_cells($all_cell);
         
     }
 
 
 
-    public function display_now() {
+    public function display_now($now) {
         if ($this->gif_output == true) $this->output_now_to_gif(10);
 
         foreach ($this->getAll_cells() as $c) {

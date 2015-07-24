@@ -15,9 +15,8 @@ and open the template in the editor.
         include_once 'World.php';
         include_once 'GolWorld.php';
 
-        $w = new GolWorld(true, 10, 15);
-       // $w->big_bang();
-       // $w->run_the_world();
+        $w = new GolWorld(true, 8, 20, 15);
+
       
        
         ?>
