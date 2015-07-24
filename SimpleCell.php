@@ -34,13 +34,14 @@ class SimpleCell extends Cell {
        echo '<br />ZElle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
         if ($calling_cell instanceof Cell){
+             $this->detach($calling_cell);
             //Wenn man Überprüfung bei Notify machen will: if ($calling_cell->getId() !== $this->getId()){
             //Wenn die anrufende Zelle nicht gleich der eigenen und auf expand
             if ($calling_cell->getId() !== $this->getId() && $calling_cell->getState() == SimpleCell::getStates()['expand']){
                 $this->last_state = $this->getState();
                 //Wenn die anrufende Zelle auf expand und diese frei; dann diese auf new 
                 if ($this->getState() ==  SimpleCell::getStates()['free']){
-                     $this->setState(SimpleCell::getStates()['new']);
+                    $this->setState(SimpleCell::getStates()['new']);
                 }
                 //Wenn die anrufende Zelle auf expand und diese new; dann diese auf expand (Bedeutet Angriff) 
                 elseif ($this->getState() == SimpleCell::getStates()['new']){

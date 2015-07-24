@@ -30,9 +30,12 @@ class SimpleWorld extends World {
        //Zufällig zwei auf expand setzen
        $rand_expand = array_rand($this->getAll_cells(), 2);
        foreach ($rand_expand as $rand){
+          echo 'Start bei '.$this->getAll_cells()[$rand]->getId().'<br />';
+       } 
+       echo '***<br />';
+       foreach ($rand_expand as $rand){
            $this->getAll_cells()[$rand]->setState(SimpleCell::getStates()['expand']);
-           echo '<br />Start bei '.$this->getAll_cells()[$rand]->getId().' -- ';
-       }   
+       } 
     }
 
     public function populate_world() {

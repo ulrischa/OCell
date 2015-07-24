@@ -35,6 +35,7 @@ class GolCell extends Cell {
                      $dead_neighbours++;
                 }
             }
+            
             if ($this->getState() == GolCell::getStates()['alive']){
                 if ($alive_neighbours != 2 && $alive_neighbours != 3){
                     $this->setState (GolCell::getStates ()['dead']); 

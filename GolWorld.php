@@ -18,9 +18,13 @@ class GolWorld extends World {
     
     private $last_row = '1';
     private $gif_output = false;
+    private $size;
+    private $num_seeds;
             
-    function __construct($gif_output) {
+    function __construct($gif_output, $size, $num_seeds) {
         $this->gif_output = $gif_output;
+        $this->size = $size;
+        $this->num_seeds = $num_seeds;
         $this->big_bang();
     }
 
@@ -28,15 +32,18 @@ class GolWorld extends World {
         //Zellen bilden und NAchbarschaft aufbauen
        $this->populate_world();
        //Zufällig zwei auf expand setzen
-       $rand_expand = array_rand($this->getAll_cells(), 5);
+       $rand_expand = array_rand($this->getAll_cells(), $this->num_seeds);
+       foreach ($rand_expand as $rand){
+          echo 'Start bei '.$this->getAll_cells()[$rand]->getId().'<br />';
+       } 
+       echo '***<br />';
        foreach ($rand_expand as $rand){
            $this->getAll_cells()[$rand]->setState(GolCell::getStates()['alive']);
-           echo 'Start bei '.$this->getAll_cells()[$rand_expand[0]]->getId(). ' und '.$this->getAll_cells()[$rand_expand[1]]->getId();
        } 
     }
 
     public function populate_world() {
-        $size = 5;
+        $size = $this->size;
         $all_cell = array();
         for ($s= 0; $s < $size*$size; $s++){
             $row = intval($s / $size);
