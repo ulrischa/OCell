@@ -24,14 +24,14 @@ class GolCell extends Cell {
        echo '<br />ZElle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
         if ($calling_cell instanceof Cell){
-            $neighbours = $this->getArr_neighbours;
+            $neighbours = $this->getArr_neighbours();
             $alive_neighbours = 0;
             $dead_neighbours = 0;
             foreach ($neighbours as $n){
-                if ($n->getState == GolCell::getStates()['alive']){
+                if ($n->getState() == GolCell::getStates()['alive']){
                     $alive_neighbours++;
                 }
-                elseif ($n->getState == GolCell::getStates()['dead']) {
+                elseif ($n->getState() == GolCell::getStates()['dead']) {
                      $dead_neighbours++;
                 }
             }

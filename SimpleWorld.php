@@ -29,10 +29,10 @@ class SimpleWorld extends World {
        $this->populate_world();
        //Zufällig zwei auf expand setzen
        $rand_expand = array_rand($this->getAll_cells(), 2);
-       $this->getAll_cells()[$rand_expand[0]]->setState(SimpleCell::getStates()['expand']);
-       $this->getAll_cells()[$rand_expand[1]]->setState(SimpleCell::getStates()['expand']);
-       echo 'Start bei '.$this->getAll_cells()[$rand_expand[0]]->getId(). ' und '.$this->getAll_cells()[$rand_expand[1]]->getId();
-       
+       foreach ($rand_expand as $rand){
+           $this->getAll_cells()[$rand]->setState(SimpleCell::getStates()['expand']);
+           echo '<br />Start bei '.$this->getAll_cells()[$rand]->getId().' -- ';
+       }   
     }
 
     public function populate_world() {
@@ -58,15 +58,15 @@ class SimpleWorld extends World {
         $c32->setArr_neighbours(array($c31, $c21, $c22, $c23, $c33)); 
         $c33->setArr_neighbours(array($c32, $c22, $c23)); 
         
-        $this->setAll_cells(array($c11,
-                            $c12,
-                            $c13,
-                            $c21,
-                            $c22,
-                            $c23,
-                            $c31,
-                            $c32,
-                            $c33
+        $this->setAll_cells(array('1,1' =>$c11,
+                            '1,2' => $c12,
+                            '1,3' => $c13,
+                            '1,4' => $c21,
+                            '2,2' => $c22,
+                            '2,3' => $c23,
+                            '3,1' => $c31,
+                            '3,2' => $c32,
+                            '3,3' => $c33
                             ));
         
     }

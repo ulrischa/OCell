@@ -28,46 +28,75 @@ class GolWorld extends World {
         //Zellen bilden und NAchbarschaft aufbauen
        $this->populate_world();
        //Zufällig zwei auf expand setzen
-       $rand_expand = array_rand($this->getAll_cells(), 2);
-       $this->getAll_cells()[$rand_expand[0]]->setState(GolCell::getStates()['alive']);
-       $this->getAll_cells()[$rand_expand[1]]->setState(GolCell::getStates()['alive']);
-       echo 'Start bei '.$this->getAll_cells()[$rand_expand[0]]->getId(). ' und '.$this->getAll_cells()[$rand_expand[1]]->getId();
-       
+       $rand_expand = array_rand($this->getAll_cells(), 5);
+       foreach ($rand_expand as $rand){
+           $this->getAll_cells()[$rand]->setState(GolCell::getStates()['alive']);
+           echo 'Start bei '.$this->getAll_cells()[$rand_expand[0]]->getId(). ' und '.$this->getAll_cells()[$rand_expand[1]]->getId();
+       } 
     }
 
     public function populate_world() {
-        $c11 = new GolCell('1,1',  GolCell::getStates()['free'], $this);
-        $c12 = new GolCell('1,2',  GolCell::getStates()['free'], $this);
-        $c13 = new GolCell('1,3',  GolCell::getStates()['free'], $this);
-        $c21 = new GolCell('2,1',  GolCell::getStates()['free'], $this);
-        $c22 = new GolCell('2,2',  GolCell::getStates()['free'], $this);
-        $c23 = new GolCell('2,3',  GolCell::getStates()['free'], $this);
-        $c31 = new GolCell('3,1',  GolCell::getStates()['free'], $this);
-        $c32 = new GolCell('3,2',  GolCell::getStates()['free'], $this);
-        $c33 = new GolCell('3,3',  GolCell::getStates()['free'], $this);
+        $size = 5;
+        $all_cell = array();
+        for ($s= 0; $s < $size*$size; $s++){
+            $row = intval($s / $size);
+            $col = ($s - ($row * $size));
+            $row = $row + 1;
+            $col = $col + 1;
+            //echo 's: '. $s.' row: '.$row.' col: '.$col.'<br />';
+            $all_cell[$row.','.$col] = new GolCell($row.','.$col,  GolCell::getStates()['free'], $this);
+        }
+        
+//        $c11 = new GolCell('1,1',  GolCell::getStates()['free'], $this);
+//        $c12 = new GolCell('1,2',  GolCell::getStates()['free'], $this);
+//        $c13 = new GolCell('1,3',  GolCell::getStates()['free'], $this);
+//        $c21 = new GolCell('2,1',  GolCell::getStates()['free'], $this);
+//        $c22 = new GolCell('2,2',  GolCell::getStates()['free'], $this);
+//        $c23 = new GolCell('2,3',  GolCell::getStates()['free'], $this);
+//        $c31 = new GolCell('3,1',  GolCell::getStates()['free'], $this);
+//        $c32 = new GolCell('3,2',  GolCell::getStates()['free'], $this);
+//        $c33 = new GolCell('3,3',  GolCell::getStates()['free'], $this);
         // 11 12 13
         // 21 22 23
         // 31 32 33
-        $c11->setArr_neighbours(array($c12, $c21, $c22));
-        $c12->setArr_neighbours(array($c11, $c13, $c21, $c22, $c23));
-        $c13->setArr_neighbours(array($c12, $c22, $c23));
-        $c21->setArr_neighbours(array($c11, $c12, $c22, $c32, $c31));
-        $c22->setArr_neighbours(array($c11, $c12, $c13, $c21, $c23, $c31, $c32, $c33));
-        $c23->setArr_neighbours(array($c12, $c13, $c22, $c32, $c33));
-        $c31->setArr_neighbours(array($c21, $c22, $c32));
-        $c32->setArr_neighbours(array($c31, $c21, $c22, $c23, $c33)); 
-        $c33->setArr_neighbours(array($c32, $c22, $c23)); 
         
-        $this->setAll_cells(array($c11,
-                            $c12,
-                            $c13,
-                            $c21,
-                            $c22,
-                            $c23,
-                            $c31,
-                            $c32,
-                            $c33
-                            ));
+        foreach ($all_cell as $c){
+            $row = $c->getRow();
+            $col = $c->getCol();
+            //Alle möglichen Richtungen nach Moore
+            $n = ($row-1).','.$col;
+            $nw = ($row-1).','.($col-1);
+            $no = ($row-1).','.($col+1);
+            $w = $row.','.($col-1);
+            $o = $row.','.($col+1);
+            $s = ($row+1).','.$col;
+            $sw = ($row+1).','.($col-1);
+            $so = ($row+1).','.($col+1);        
+            $arr_directions = array($n, $nw, $no, $w, $o, $s, $sw, $so);
+            //Welche davon gibt es?
+            $arr_existing_neighbours = array();
+            foreach ($arr_directions as $d){
+                if (array_key_exists($d, $all_cell)) {
+                    $arr_existing_neighbours[] = $all_cell[$d];
+                }
+            }
+            $c->setArr_neighbours($arr_existing_neighbours);        
+
+
+
+        }
+        
+//        $c11->setArr_neighbours(array($c12, $c21, $c22));
+//        $c12->setArr_neighbours(array($c11, $c13, $c21, $c22, $c23));
+//        $c13->setArr_neighbours(array($c12, $c22, $c23));
+//        $c21->setArr_neighbours(array($c11, $c12, $c22, $c32, $c31));
+//        $c22->setArr_neighbours(array($c11, $c12, $c13, $c21, $c23, $c31, $c32, $c33));
+//        $c23->setArr_neighbours(array($c12, $c13, $c22, $c32, $c33));
+//        $c31->setArr_neighbours(array($c21, $c22, $c32));
+//        $c32->setArr_neighbours(array($c31, $c21, $c22, $c23, $c33)); 
+//        $c33->setArr_neighbours(array($c32, $c22, $c23)); 
+        
+        $this->setAll_cells($all_cell);
         
     }
 
@@ -83,8 +112,8 @@ class GolWorld extends World {
                        echo '<br />';
             }
             $color = 'white';
-            if ($c->getState() == SimpleCell::getStates()['alive']) $color = 'green';
-            elseif ($c->getState() == SimpleCell::getStates()['dead']) $color = 'red';
+            if ($c->getState() == GolCell::getStates()['alive']) $color = 'green';
+            elseif ($c->getState() == GolCell::getStates()['dead']) $color = 'red';
             echo ' <span style="color:'.$color.'; display:inline-block; background-color:'.$color.'; width:10px; height:10px;border:1px solid black;">&nbsp;'.'</span>';
             $this->last_row = $row;
         }
@@ -125,10 +154,10 @@ class GolWorld extends World {
                    $y1 = ($i_r-1)*$size;
                    $y2 = $y1+$size;
                    
-                   if ($c->getState() == SimpleCell::getStates()['new']){
+                   if ($c->getState() == GolCell::getStates()['alive']){
                        imagefilledrectangle($img, $x1, $y1, $x2, $y2, $onColour);
                    }
-                   elseif ($c->getState() == SimpleCell::getStates()['expand']) {
+                   elseif ($c->getState() == GolCell::getStates()['dead']) {
                        $onColour = imagecolorallocate($img, 255, 0, 0);
                        imagefilledrectangle($img, $x1, $y1, $x2, $y2, $onColour);
                        
