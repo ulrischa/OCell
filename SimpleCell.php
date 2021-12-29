@@ -17,7 +17,7 @@ class SimpleCell extends Cell {
     
        
     public function update(\SplSubject $calling_cell) {
-       echo '<br />ZElle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
+       echo '<br />Zelle '.$calling_cell->getId().' benachrichtigt Zelle: '.$this->getId().'<br />';
         //Nur Update wenn Zelle sich nicht selbst benachrichtigt hat
         if ($calling_cell instanceof Cell){
              $this->detach($calling_cell);
