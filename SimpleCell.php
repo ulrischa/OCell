@@ -5,7 +5,6 @@
  * Wenn Zustand auf Expand gesetzt, breitet sich die Zelle (auf alle freien Nachbarn) aus und setzt sich selbst auf free
  * 
  * 
- * http://www.sitepoint.com/understanding-the-observer-pattern/
  */
 
 /**
